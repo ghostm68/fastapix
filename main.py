@@ -1,17 +1,26 @@
-from typing import Union
-
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from pydantic import BaseModel
+from typing import Optional, List
 
 app = FastAPI()
 
+class Place(BaseModel):
+    name: str
+    description: Optional[str] = None
+    coffee: bool
+    wifi: bool
+    food: bool
+    lat: float
+    lng: float
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+    class Config:
+        orm_mode = True
 
+@app.post('/places/')
+async def create_place_view(place: Place):
+    return place
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
+@app.get('/')
+async def root():
+    return {'message': 'Hello World!'}
     
